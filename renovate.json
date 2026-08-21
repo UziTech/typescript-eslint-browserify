@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": true,
+  "rangeStrategy": "bump",
+  "ignoreDeps": [
+    "typescript-eslint"
+  ]
+}

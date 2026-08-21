@@ -1,0 +1,76 @@
+import { getIDToken } from "@actions/core";
+import { execSync } from "child_process";
+import pkg from "./package.json" with { type: "json" };
+
+function exec(command, hideCommand = false) {
+  if (!hideCommand) {
+    console.log(`> ${command}`);
+  }
+  let output;
+  try {
+    output = execSync(command, { cwd: import.meta.dirname, encoding: "utf8" });
+  } catch (ex) {
+    throw new Error((ex.stdout ? ex.stdout : ex.stderr) ?? ex.message, {
+      cause: ex,
+    });
+  }
+  output = output.trim();
+  console.log(`${output}\n`);
+  return output;
+}
+
+async function connectOIDC() {
+  const token = await getIDToken("npm:registry.npmjs.org");
+  const response = await fetch(
+    `https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${pkg.name}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  if (response.ok) {
+    const responseBody = await response.json();
+    return responseBody.token;
+  } else {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to get OIDC token: ${response.status} ${response.statusText}\n${errorBody}`,
+    );
+  }
+}
+
+const tsEslintVersion = exec("npm view typescript-eslint@latest version");
+
+if (!/^\d+\.\d+\.\d+$/.test(tsEslintVersion)) {
+  console.error("Invalid typescript-eslint version");
+  process.exit(1);
+}
+
+console.log(`> Current version\n${pkg.version}\n`);
+
+if (tsEslintVersion === pkg.version) {
+  console.log("No update available");
+} else {
+  const oidcToken = await connectOIDC();
+  try {
+    exec(`npm config set //registry.npmjs.org/:_authToken=${oidcToken}`, true);
+
+    exec("npm install");
+    exec(`npm install typescript-eslint@${tsEslintVersion} --save-dev --save-exact`);
+    exec("npm run lint");
+    exec("npm run build");
+    exec("npm test");
+    exec('git config user.email "<>"');
+    exec('git config user.name "Github Actions"');
+    exec(`git commit -am "update typescript-eslint to v${tsEslintVersion}"`);
+    exec(`npm version ${tsEslintVersion}`);
+    exec("npm publish");
+    exec(
+      'git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:master --follow-tags',
+    );
+  } catch (ex) {
+    console.error(ex);
+    process.exit(1);
+  }
+}
