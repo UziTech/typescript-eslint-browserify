@@ -52,7 +52,7 @@ function generateRollup(output) {
 	}
 
 	return {
-		context: "window",
+		context: "globalThis",
 		input: "index.js",
 		output: {
 			intro: "if (!global) { var global = globalThis || window; }\nvar process = global.process = global.process || { env: {}, platform: 'browser' };",

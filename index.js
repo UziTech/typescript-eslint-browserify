@@ -1,3 +1,10 @@
-const tsEslint = require("typescript-eslint");
+import tsEslint from "typescript-eslint";
 
-module.exports = tsEslint;
+export const config = tsEslint.config;
+export const configs = tsEslint.configs;
+export const extensions = tsEslint.extensions;
+export const globs = tsEslint.globs;
+export const parser = tsEslint.parser;
+export const plugin = tsEslint.plugin;
+
+export default tsEslint;

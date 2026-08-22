@@ -1,5 +1,5 @@
 function testLinter(name, tsEslint) {
-	if (typeof tsEslint.config.recommended === "object") {
+	if (typeof tsEslint.configs.recommended === "object") {
 		console.log(`Passed`);
 	} else {
 		console.error(`Failed`);
