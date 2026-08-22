@@ -1,11 +1,11 @@
-# eslint-linter-browserify
+# typescript-eslint-browserify
 
-Use ESLint in the browser.
+Use typescript-eslint in the browser.
 
 ## Installation
 
 ```sh
-npm install eslint-linter-browserify
+npm install typescript-eslint-browserify
 ```
 
 ## Usage
@@ -14,26 +14,10 @@ npm install eslint-linter-browserify
 
 ```js
 import * as eslint from "eslint-linter-browserify";
-// or const eslint = require("eslint-linter-browserify");
-
-const linter = new eslint.Linter();
-
-const messages = linter.verify("var foo;", {
-  rules: {
-    semi: ["error", "never"]
-  }
-}, { filename: "foo.js" });
-
-console.log(messages);
-```
-
-### TypeScript
-
-To lint TypeScript, configure `@typescript-eslint/parser` or use `typescript-eslint` recommended configurations:
-
-```js
-import * as eslint from "eslint-linter-browserify";
-import tseslint from "typescript-eslint";
+import tseslint from "typescript-eslint-browserify";
+// or:
+// const eslint = require("eslint-linter-browserify");
+// const tseslint = require("typescript-eslint-browserify");
 
 const linter = new eslint.Linter();
 
@@ -55,18 +39,26 @@ console.log(messages);
 
 ### Browser (Script Tag / CDN)
 
-Loading the UMD bundle directly via a `<script>` tag exposes `window.eslint.Linter`:
+Loading the UMD bundle directly via `<script>` tags exposes `window.tseslint`:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/eslint-linter-browserify/linter.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typescript-eslint-browserify/tseslint.min.js"></script>
 <script>
   const linter = new eslint.Linter();
 
-  const messages = linter.verify("var foo;", {
-    rules: {
-      semi: ["error", "never"]
-    }
-  }, { filename: "foo.js" });
+  const messages = linter.verify(
+    "const foo: string = 'bar';",
+    [
+      ...tseslint.configs.recommended,
+      {
+        rules: {
+          semi: ["error", "never"],
+        },
+      },
+    ],
+    { filename: "foo.ts" }
+  );
 
   console.log(messages);
 </script>
@@ -76,16 +68,11 @@ Loading the UMD bundle directly via a `<script>` tag exposes `window.eslint.Lint
 
 | File / Package Specifier | Format | Description |
 | --- | --- | --- |
-| `eslint-linter-browserify` | ESM (`linter.mjs`) / CJS (`linter.cjs`) | Default entry points for bundlers (Vite, Rollup, Webpack, etc.) and Node.js |
-| `linter.min.js` | UMD (minified) | Standalone minified bundle for browser `<script>` tags (`window.eslint.Linter`) |
-| `linter.js` | UMD (unminified) | Standalone unminified bundle for development and debugging |
-
-## Examples
-
-- [CodeMirror JavaScript Example](./example) - Using ESLint with CodeMirror for JavaScript.
-- [CodeMirror TypeScript Example](./example-typescript) - Using ESLint and `typescript-eslint` recommended configuration with CodeMirror for TypeScript.
+| `typescript-eslint-browserify` | ESM (`tseslint.mjs`) / CJS (`tseslint.cjs`) | Default entry points for bundlers (Vite, Rollup, Webpack, etc.) and Node.js |
+| `tseslint.min.js` | UMD (minified) | Standalone minified bundle for browser `<script>` tags (`window.tseslint`) |
+| `tseslint.js` | UMD (unminified) | Standalone unminified bundle for development and debugging |
 
 ## Documentation
 
-For full details on the `Linter` API and supported options, see the [ESLint Node.js API Documentation](https://eslint.org/docs/latest/integrate/nodejs-api#linter).
-
+- [typescript-eslint Documentation](https://typescript-eslint.io/)
+- [eslint-linter-browserify](https://github.com/UziTech/eslint-linter-browserify)
