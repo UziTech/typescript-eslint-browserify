@@ -12,6 +12,8 @@ const fsPromisesStub = path.resolve(__dirname, "stubs/fs-promises-stub.js");
 const workerThreadsStub = path.resolve(__dirname, "stubs/worker-threads-stub.js");
 const eslintStub = path.resolve(__dirname, "stubs/eslint-stub.js");
 const getTSConfigRootDirFromStackStub = path.resolve(__dirname, "stubs/get-tsconfig-root-dir-stub.js");
+const semverComparatorStub = path.resolve(__dirname, "stubs/semver-comparator-stub.js");
+const getTextWithParenthesesStub = path.resolve(__dirname, "stubs/get-text-with-parentheses-stub.js");
 const eslintRules = path.resolve(__dirname, "node_modules/eslint/lib/rules/index.js");
 const eslintSourceCode = path.resolve(__dirname, "node_modules/eslint/lib/languages/js/source-code/index.js");
 
@@ -31,6 +33,8 @@ function generateRollup(output) {
 				{ find: "eslint/lib/languages/js/source-code", replacement: eslintSourceCode },
 				{ find: /^eslint$/, replacement: eslintStub },
 				{ find: /.*\/getTSConfigRootDirFromStack(\.js)?$/, replacement: getTSConfigRootDirFromStackStub },
+				{ find: /.*(^|[\\/])comparator(\.js)?$/, replacement: semverComparatorStub },
+				{ find: /.*\/getTextWithParentheses(\.js)?$/, replacement: getTextWithParenthesesStub },
 				{ find: /^node:(.*)/, replacement: '$1' },
 			],
 		}),
