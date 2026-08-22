@@ -17,8 +17,40 @@ const getTextWithParenthesesStub = path.resolve(__dirname, "stubs/get-text-with-
 const eslintRules = path.resolve(__dirname, "node_modules/eslint/lib/rules/index.js");
 const eslintSourceCode = path.resolve(__dirname, "node_modules/eslint/lib/languages/js/source-code/index.js");
 
-function generateRollup(output) {
-	const plugins = [
+const intro = "if (!global) { var global = globalThis || window; }\nvar process = global.process = global.process || { env: {}, platform: 'browser' };";
+
+export default {
+	context: "globalThis",
+	input: "index.js",
+	output: [
+		{
+			file: "tseslint.js",
+			format: "umd",
+			exports: "named",
+			name: "tseslint",
+			intro,
+		},
+		{
+			file: "tseslint.min.js",
+			format: "umd",
+			exports: "named",
+			name: "tseslint",
+			intro,
+			plugins: [terser()],
+		},
+		{
+			file: "tseslint.mjs",
+			format: "esm",
+			intro,
+		},
+		{
+			file: "tseslint.cjs",
+			format: "cjs",
+			exports: "named",
+			intro,
+		},
+	],
+	plugins: [
 		alias({
 			entries: [
 				{ find: "node:fs/promises", replacement: fsPromisesStub },
@@ -49,43 +81,5 @@ function generateRollup(output) {
 		}),
 		json(),
 		nodePolyfills(),
-	];
-
-	if (output.file.match(/\.min\./)) {
-		plugins.push(terser());
-	}
-
-	return {
-		context: "globalThis",
-		input: "index.js",
-		output: {
-			intro: "if (!global) { var global = globalThis || window; }\nvar process = global.process = global.process || { env: {}, platform: 'browser' };",
-			...output,
-		},
-		plugins,
-	};
-}
-
-export default [
-	generateRollup({
-		file: "tseslint.js",
-		format: "umd",
-		exports: "named",
-		name: "tseslint",
-	}),
-	generateRollup({
-		file: "tseslint.min.js",
-		format: "umd",
-		exports: "named",
-		name: "tseslint",
-	}),
-	generateRollup({
-		file: "tseslint.mjs",
-		format: "esm",
-	}),
-	generateRollup({
-		file: "tseslint.cjs",
-		format: "cjs",
-		exports: "named",
-	}),
-];
+	],
+};
