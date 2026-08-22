@@ -24,18 +24,13 @@
   ],
   "scripts": {
     "test": "node test.cjs && node test.mjs",
-    "build": "rollup --config",
+    "build": "node build.mjs",
     "lint": "eslint"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^6.0.0",
-    "@rollup/plugin-commonjs": "^29.0.3",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-terser": "^1.0.0",
+    "esbuild": "^0.28.2",
     "eslint": "10.9.0",
     "eslint-linter-browserify": "10.9.0",
-    "rollup": "^4.62.5",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0"
